@@ -33,24 +33,22 @@
         .title-container {
             position: fixed;
             top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 25px;
-            z-index: 2;
+            left: 0;
+            right: 0;
+            text-align: center;
+            z-index: 10;
         }
 
         .title {
-            font-size: 3.5em;
-            font-weight: bold;
-            padding: 15px 40px;
-            background: rgba(0, 0, 0, 0.8);
-            border-radius: 10px;
-            text-shadow: 0 0 15px #5fce8b, 0 0 25px #5fce8b, 0 0 35px #5fce8b;
-            color: #fff;
+            font-family: Helvetica, Arial, sans-serif;
+            font-size: 48px;
+            color: white;
+            text-shadow: 0 0 20px #5fce8b;
             margin: 0;
+            padding: 0;
+            letter-spacing: 2px;
+            text-align: center;
+            font-weight: bold;
         }
 
         .social-links {
@@ -74,7 +72,7 @@
 
         .buttons {
             position: fixed;
-            bottom: 100px;
+            bottom: 200px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
@@ -172,13 +170,20 @@
         .warning-ring:nth-child(4) { animation: ringExpand 2s infinite 1.2s; }
 
         .glitch-text {
+            font-family: Helvetica, Arial, sans-serif;
             font-size: 36px;
-            font-weight: 900;
             color: #fff;
             text-shadow: 0 0 15px #5fce8b;
             position: relative;
             animation: textFlicker 4s infinite;
             margin-bottom: 2rem;
+            text-align: center;
+            letter-spacing: 3px;
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
         }
 
         .cyber-text {
@@ -283,34 +288,25 @@
         }
 
         @keyframes textFlicker {
-            0%, 100% { opacity: 1; }
-            8%, 9% { opacity: 0.8; }
-            10%, 12% { opacity: 0.9; }
-            20%, 21% { opacity: 0.7; }
-            35%, 36% { opacity: 0.9; }
-            38%, 40% { opacity: 0.8; }
-            50%, 51% { opacity: 1; }
+            0% { text-shadow: 0 0 15px #5fce8b; }
+            50% { text-shadow: 0 0 30px #5fce8b; }
+            100% { text-shadow: 0 0 15px #5fce8b; }
         }
 
         .firework {
             position: fixed;
-            pointer-events: none;
-            z-index: 1000;
-            animation: fadeOut 1.2s forwards;
             width: 200px;
             height: 200px;
-            object-fit: contain;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0;
+            transition: opacity 0.5s;
         }
 
-        @keyframes fadeOut {
-            0% {
-                opacity: 1;
-                transform: scale(0.8);
-            }
-            100% {
-                opacity: 0;
-                transform: scale(1.5);
-            }
+        .firework img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
         }
 
         .about-modal {
@@ -405,48 +401,102 @@
             height: 300px;
             background: rgba(0, 0, 0, 0.9);
             border: 1px solid rgba(95, 206, 139, 0.2);
-            box-shadow: 
-                0 0 30px rgba(95, 206, 139, 0.1),
-                inset 0 0 30px rgba(95, 206, 139, 0.1);
+            box-shadow: 0 0 30px rgba(95, 206, 139, 0.1);
             padding: 30px;
             z-index: 10;
             border-radius: 5px;
-            overflow: hidden;
+            overflow: hidden !important;
+            position: relative;
+            clip-path: inset(0 0 0 0);
+        }
+
+        .scan-line-panel {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                to bottom,
+                transparent,
+                rgba(95, 206, 139, 0.2) 50%,
+                transparent
+            );
+            height: 100%;
+            width: 100%;
+            transform: translateY(-100%);
+            animation: scanMove 4s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes scanMove {
+            from {
+                transform: translateY(-100%);
+            }
+            to {
+                transform: translateY(100%);
+            }
+        }
+
+        .side-panel-content {
+            position: relative;
+            z-index: 2;
         }
 
         .side-panel-title {
-            color: #5fce8b;
             font-family: Helvetica, Arial, sans-serif;
-            font-size: 24px;
-            font-weight: 900;
-            margin-bottom: 20px;
-            letter-spacing: 2px;
+            color: #5fce8b;
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 30px;
+            letter-spacing: 1px;
             animation: textFlicker 4s infinite;
             text-align: center;
+            line-height: 1.2;
+            position: relative;
+            z-index: 2;
         }
 
         .side-panel-text {
-            font-family: 'Anton', sans-serif;
+            font-family: Helvetica, Arial, sans-serif;
             color: white;
-            font-size: 18px;
-            line-height: 1.6;
+            font-size: 20px;
+            line-height: 1.5;
             text-shadow: 0 0 10px #5fce8b;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
             text-align: center;
+            position: relative;
+            z-index: 2;
         }
 
         .token-text {
+            font-family: Helvetica, Arial, sans-serif;
             color: #5fce8b;
-            font-size: 24px;
-            display: block;
-            margin-top: 10px;
+            font-size: 28px;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 30px;
             animation: textFlicker 4s infinite;
             text-shadow: 0 0 15px #5fce8b;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Add grid background effect */
+        .grid-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                linear-gradient(rgba(95, 206, 139, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(95, 206, 139, 0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+            pointer-events: none;
+            z-index: -1;
         }
 
         #model-container {
-            width: 800px;
-            height: 800px;
+            width: 900px;
+            height: 900px;
             position: fixed;
             top: 45%;
             left: 50%;
@@ -456,7 +506,7 @@
 
         .buttons {
             position: fixed;
-            bottom: 100px;
+            bottom: 180px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
@@ -466,27 +516,33 @@
 
         .scan-line-panel {
             position: absolute;
-            top: 0;
+            top: -100%;
             left: 0;
             width: 100%;
             height: 100%;
             background: linear-gradient(
                 to bottom,
-                transparent 0%,
+                transparent,
                 rgba(95, 206, 139, 0.2) 50%,
-                transparent 100%
+                transparent
             );
-            animation: scanContained 4s linear infinite;
             pointer-events: none;
+            animation: scanEffect 4s linear infinite;
         }
 
-        @keyframes scanContained {
+        @keyframes scanEffect {
             0% {
-                transform: translateY(-100%);
+                transform: translateY(0);
             }
             100% {
                 transform: translateY(100%);
             }
+        }
+
+        /* Make content appear above scan line */
+        .side-panel > *:not(.scan-line-panel) {
+            position: relative;
+            z-index: 2;
         }
 
         /* Global font setting */
@@ -609,6 +665,54 @@
             background: #5fce8b;
             color: black;
         }
+
+        /* Bigger X button with glow */
+        .social-container {
+            position: fixed;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+        }
+
+        .x-button {
+            display: block;
+            text-align: center;
+        }
+
+        .x-button img {
+            width: 50px;
+            height: auto;
+            filter: drop-shadow(0 0 8px rgba(95, 206, 139, 0.5));
+            transition: all 0.3s;
+        }
+
+        .x-button:hover img {
+            filter: drop-shadow(0 0 15px #5fce8b);
+            transform: scale(1.1);
+        }
+
+        /* Bigger Buy Now button */
+        .cyber-button {
+            font-family: Helvetica, Arial, sans-serif;
+            background: transparent;
+            border: 2px solid #5fce8b;
+            color: #5fce8b;
+            padding: 1.5rem 3rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px #5fce8b;
+            box-shadow: 0 0 20px rgba(95, 206, 139, 0.3);
+            text-decoration: none;
+        }
+
+        .cyber-button:hover {
+            background: #5fce8b;
+            color: black;
+            box-shadow: 0 0 30px rgba(95, 206, 139, 0.5);
+        }
     </style>
 </head>
 <body>
@@ -616,20 +720,12 @@
     <!-- <div id="model-container"></div> -->
     
     <div class="title-container">
-        <h1 class="title">PUMPFUNROCKET</h1>
-        <div class="social-links">
-            <a href="https://twitter.com/your_twitter" target="_blank">
-                <img src="X_logo_2023_(white).png" alt="Twitter" class="social-icon">
-            </a>
-            <a href="https://t.me/your_telegram" target="_blank">
-                <img src="telegram-icon-2048x1739-6c7sghxm.png" alt="Telegram" class="social-icon">
-            </a>
-        </div>
+        <h1 class="title">PUMPROCKET</h1>
     </div>
 
     <div class="buttons">
-        <button onclick="window.location.href='#buy-link'">Buy Now</button>
-        <button onclick="explode()">Set Off</button>
+        <a href="https://pump.fun/board" target="_blank" class="cyber-button">BUY NOW</a>
+        <button class="cyber-button set-off-button" onclick="playSound()">SET OFF</button>
     </div>
 
     <div class="cyber-modal" id="warningModal">
@@ -665,16 +761,41 @@
     <!-- Add the side panel -->
     <div class="side-panel">
         <div class="scan-line-panel"></div>
-        <h2 class="side-panel-title">ABOUT PUMPROCKET</h2>
-        <p class="side-panel-text">
-            The first rocket fueled by pumpfun, set to ignite the Solana blockchain. Fast, fearless, unstoppable.<br><br>
-            APE OR BE LEFT BEHIND!<br><br>
-            <span class="token-text">$PUMP2025</span>
-        </p>
+        <div class="side-panel-content">
+            <h2 class="side-panel-title">ABOUT<br>PUMPROCKET</h2>
+            <p class="side-panel-text">
+                The first rocket fueled by pumpfun,<br>
+                set to ignite the Solana blockchain.<br>
+                Fast, fearless, unstoppable.<br><br>
+                APE OR BE LEFT BEHIND!
+            </p>
+            <div class="token-text">$PROCKET2025</div>
+        </div>
     </div>
 
     <!-- 3D Model Container -->
     <div id="model-container"></div>
+
+    <!-- Just the X button, centered -->
+    <div class="social-container">
+        <a href="https://x.com/pumpfunrocket25" target="_blank" class="x-button">
+            <img src="X_logo_2023_(white).png" alt="X Logo">
+        </a>
+    </div>
+
+    <!-- Add firework element -->
+    <div class="firework">
+        <img src="371d7a79a0334079a6c09452242d34ef.png" alt="Firework">
+    </div>
+
+    <!-- Comment out the CA box HTML -->
+    <!--
+    <div class="ca-display">
+        <span class="ca-label">CA:</span>
+        <span id="contractAddress" class="ca-text">YOUR_CONTRACT_ADDRESS_HERE</span>
+        <button class="copy-button" onclick="copyCA()">COPY</button>
+    </div>
+    -->
 
     <script>
         const gridCanvas = document.getElementById('grid-canvas');
@@ -744,7 +865,7 @@
                 alpha: true,
                 antialias: true 
             });
-            renderer.setSize(800, 800);
+            renderer.setSize(900, 900);
             renderer.setClearColor(0x000000, 0);
             document.getElementById('model-container').appendChild(renderer.domElement);
 
@@ -762,8 +883,9 @@
                 'Rocket_Box_0101005506_texture.glb',
                 function (gltf) {
                     model = gltf.scene;
-                    model.scale.set(0.7, 0.7, 0.7);
+                    model.scale.set(0.9, 0.9, 0.9);  /* Increased scale */
                     model.rotation.y = Math.PI / 4;
+                    camera.position.set(0, 0, 2.8);   /* Adjusted camera */
                     scene.add(model);
                     console.log('Model loaded successfully!');
                 },
@@ -793,7 +915,7 @@
         function onWindowResize() {
             camera.aspect = 1;
             camera.updateProjectionMatrix();
-            renderer.setSize(800, 800);
+            renderer.setSize(900, 900);
         }
 
         function toggleAbout() {
@@ -818,73 +940,81 @@
             }
         });
 
-        // Pre-load assets
-        const fireworkSound = new Audio('Sound Effects - Fireworks 4(1).mp3');
-        const fireworkImage = new Image();
-        fireworkImage.src = '371d7a79a0334079a6c09452242d34ef.png';
-        
-        // Debounce function to prevent multiple rapid clicks
-        let isExploding = false;
-        
-        function explode() {
-            if (isExploding) return; // Prevent multiple simultaneous explosions
-            
-            isExploding = true;
-            
-            // Play sound
-            fireworkSound.volume = 0.3;
-            fireworkSound.currentTime = 0;
-            const soundPromise = fireworkSound.play().catch(err => console.log('Audio error:', err));
-            
-            // Create fireworks in batches
-            const totalFireworks = 50;  // Increased to 50
-            const batchSize = 8;        // Increased batch size for better performance
-            const delay = 50;           // Reduced delay between batches
-            
-            for (let i = 0; i < totalFireworks; i++) {
-                setTimeout(() => {
-                    requestAnimationFrame(() => createFirework());
-                }, (i / batchSize) * delay);
-            }
-            
-            // Reset the explosion lock after animation completes
-            setTimeout(() => {
-                isExploding = false;
-            }, (totalFireworks / batchSize) * delay + 1200);
-        }
+        // Debug: Log when script loads
+        console.log('Fireworks script loaded');
 
+        const audio = new Audio('Sound Effects - Fireworks 4(1).mp3');
+        
         function createFirework() {
-            const firework = fireworkImage.cloneNode();
+            console.log('Creating firework'); // Debug log
+            
+            const firework = document.createElement('div');
             firework.className = 'firework';
             
-            // Adjust positioning for larger fireworks
-            const maxX = window.innerWidth - 200;  // Updated to match new size
-            const maxY = window.innerHeight - 200;
-            const padding = 100; // Increased padding from edges
+            const img = document.createElement('img');
+            // Make sure this path exactly matches your image file name
+            img.src = '371d7a79a0334079a6c09452242d34ef.png';
             
-            firework.style.left = Math.floor(padding + Math.random() * (maxX - padding * 2)) + 'px';
-            firework.style.top = Math.floor(padding + Math.random() * (maxY - padding * 2)) + 'px';
+            // Debug: Log if image fails to load
+            img.onerror = () => console.error('Firework image failed to load');
+            img.onload = () => console.log('Firework image loaded');
+            
+            firework.appendChild(img);
+            
+            // Set random position
+            firework.style.left = Math.random() * (window.innerWidth - 200) + 'px';
+            firework.style.top = Math.random() * (window.innerHeight - 200) + 'px';
             
             document.body.appendChild(firework);
             
-            firework.addEventListener('animationend', () => {
-                document.body.removeChild(firework);
-            }, { once: true });
+            // Force reflow
+            firework.offsetHeight;
+            
+            // Show firework
+            firework.style.opacity = '1';
+            
+            // Remove after animation
+            setTimeout(() => {
+                firework.style.opacity = '0';
+                setTimeout(() => {
+                    if (firework.parentNode) {
+                        firework.parentNode.removeChild(firework);
+                    }
+                }, 500);
+            }, 500);
+        }
+        
+        function playSound() {
+            console.log('PlaySound triggered'); // Debug log
+            
+            audio.currentTime = 0;
+            audio.play().catch(e => console.error('Audio play error:', e));
+            
+            // Create fireworks
+            for(let i = 0; i < 55; i++) {
+                setTimeout(() => {
+                    createFirework();
+                }, Math.random() * 500);
+            }
+            
+            // Button feedback
+            const button = document.querySelector('.set-off-button');
+            if (button) {
+                button.style.background = '#5fce8b';
+                button.style.color = 'black';
+                
+                setTimeout(() => {
+                    button.style.background = 'transparent';
+                    button.style.color = '#5fce8b';
+                }, 500);
+            }
         }
 
-        // Optimize resize handler
-        let resizeTimeout;
-        window.addEventListener('resize', () => {
-            if (resizeTimeout) clearTimeout(resizeTimeout);
-            resizeTimeout = setTimeout(() => {
-                const maxX = window.innerWidth - 150;
-                const maxY = window.innerHeight - 150;
-                document.querySelectorAll('.firework').forEach(firework => {
-                    firework.style.left = Math.floor(Math.random() * maxX) + 'px';
-                    firework.style.top = Math.floor(Math.random() * maxY) + 'px';
-                });
-            }, 100);
-        });
+        // Preload image
+        const preloadImage = new Image();
+        preloadImage.src = '371d7a79a0334079a6c09452242d34ef.png';
+        preloadImage.onload = () => console.log('Preload image loaded');
+        preloadImage.onerror = () => console.error('Preload image failed to load');
 
         function showAbout() {
             document.getElementById('aboutModal').style.display = 'flex';
@@ -892,6 +1022,18 @@
 
         function closeAbout() {
             document.getElementById('aboutModal').style.display = 'none';
+        }
+
+        function copyCA() {
+            const ca = document.getElementById('contractAddress').textContent;
+            navigator.clipboard.writeText(ca)
+                .then(() => {
+                    const button = document.querySelector('.copy-button');
+                    button.textContent = 'COPIED!';
+                    setTimeout(() => {
+                        button.textContent = 'COPY';
+                    }, 2000);
+                });
         }
     </script>
 </body>

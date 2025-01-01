@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PUMPFUNROCKET</title>
+    <!-- Add back Three.js scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            background: #000000;
+            color: white;
+            font-family: 'Arial', sans-serif;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        #grid-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        .title-container {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 25px;
+            z-index: 2;
+        }
+
+        .title {
+            font-size: 3.5em;
+            font-weight: bold;
+            padding: 15px 40px;
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 10px;
+            text-shadow: 0 0 15px #5fce8b, 0 0 25px #5fce8b, 0 0 35px #5fce8b;
+            color: #fff;
+            margin: 0;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 50px;
+            justify-content: center;
+        }
+
+        .social-icon {
+            width: 60px;
+            height: 60px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            filter: drop-shadow(0 0 15px #5fce8b);
+        }
+
+        .social-icon:hover {
+            transform: scale(1.1);
+            filter: drop-shadow(0 0 25px #5fce8b);
+        }
+
+        .buttons {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            z-index: 2;
+        }
+
+        button {
+            padding: 30px 60px;
+            font-size: 28px;
+            font-weight: bold;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            background: #5fce8b;
+            color: black;
+            transition: all 0.3s;
+            border: 3px solid #5fce8b;
+            text-transform: uppercase;
+            box-shadow: 0 0 20px #5fce8b;
+            min-width: 200px;
+            letter-spacing: 1px;
+        }
+
+        button:hover {
+            transform: scale(1.1);
+            background: transparent;
+            color: #5fce8b;
+            box-shadow: 0 0 40px #5fce8b;
+        }
+
+        .cyber-modal {
+            z-index: 999;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 1;
+        }
+
+        .modal-content {
+            padding: 4rem;
+            text-align: center;
+            width: 600px;
+            height: 558px;
+            position: relative;
+            animation: contentSlideUp 0.8s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+            background: rgba(0, 0, 0, 0.9);
+            border: 1px solid rgba(95, 206, 139, 0.2);
+            box-shadow: 
+                0 0 30px rgba(95, 206, 139, 0.1),
+                inset 0 0 30px rgba(95, 206, 139, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .warning-container {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 2rem;
+        }
+
+        .warning-symbol img {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: symbolPulse 2s infinite;
+            filter: drop-shadow(0 0 15px #5fce8b);
+        }
+
+        .warning-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 2px solid #5fce8b;
+            border-radius: 50%;
+            opacity: 0;
+        }
+
+        .warning-ring:nth-child(2) { animation: ringExpand 2s infinite; }
+        .warning-ring:nth-child(3) { animation: ringExpand 2s infinite 0.6s; }
+        .warning-ring:nth-child(4) { animation: ringExpand 2s infinite 1.2s; }
+
+        .glitch-text {
+            font-size: 36px;
+            font-weight: 900;
+            color: #fff;
+            text-shadow: 0 0 15px #5fce8b;
+            position: relative;
+            animation: textFlicker 4s infinite;
+            margin-bottom: 2rem;
+        }
+
+        .cyber-text {
+            font-size: 24px;
+            margin: 2rem 0;
+            color: white;
+            text-shadow: 0 0 10px #5fce8b;
+            opacity: 1;
+            text-transform: uppercase;
+            font-weight: bold;
+            letter-spacing: 1px;
+            animation: textFlicker 4s infinite;
+        }
+
+        .cyber-button {
+            background: transparent;
+            border: 2px solid #5fce8b;
+            color: #5fce8b;
+            padding: 15px 40px;
+            font-size: 22px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            font-weight: bold;
+            letter-spacing: 2px;
+            opacity: 1;
+            animation: buttonGlitch 3s linear infinite;
+        }
+
+        .cyber-button:hover {
+            background: #5fce8b;
+            color: #000;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(95, 206, 139, 0.3);
+        }
+
+        .scan-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to bottom,
+                transparent 0%,
+                rgba(95, 206, 139, 0.2) 50%,
+                transparent 100%
+            );
+            animation: scan 4s linear infinite;
+            pointer-events: none;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes contentSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes symbolPulse {
+            0%, 100% {
+                transform: translate(-50%, -50%) scale(1);
+                filter: drop-shadow(0 0 15px #5fce8b);
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.1);
+                filter: drop-shadow(0 0 25px #5fce8b);
+            }
+        }
+
+        @keyframes ringExpand {
+            0% {
+                width: 0;
+                height: 0;
+                opacity: 0.8;
+            }
+            100% {
+                width: 120px;
+                height: 120px;
+                opacity: 0;
+            }
+        }
+
+        @keyframes scan {
+            from { transform: translateY(-100%); }
+            to { transform: translateY(100%); }
+        }
+
+        @keyframes textFlicker {
+            0%, 100% { opacity: 1; }
+            8%, 9% { opacity: 0.8; }
+            10%, 12% { opacity: 0.9; }
+            20%, 21% { opacity: 0.7; }
+            35%, 36% { opacity: 0.9; }
+            38%, 40% { opacity: 0.8; }
+            50%, 51% { opacity: 1; }
+        }
+
+        .firework {
+            position: fixed;
+            pointer-events: none;
+            z-index: 1000;
+            animation: fadeOut 1.2s forwards;
+            width: 200px;
+            height: 200px;
+            object-fit: contain;
+        }
+
+        @keyframes fadeOut {
+            0% {
+                opacity: 1;
+                transform: scale(0.8);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(1.5);
+            }
+        }
+
+        .about-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 600px;
+            height: 558px;
+            background: rgba(0, 0, 0, 0.9);
+            border: 1px solid rgba(95, 206, 139, 0.2);
+            box-shadow: 
+                0 0 30px rgba(95, 206, 139, 0.1),
+                inset 0 0 30px rgba(95, 206, 139, 0.1);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            display: none; /* Hidden by default */
+        }
+
+        .about-title {
+            color: #5fce8b;
+            font-family: Helvetica, Arial, sans-serif;
+            font-size: 36px;
+            font-weight: 900;
+            margin-bottom: 40px;
+            text-align: center;
+            letter-spacing: 2px;
+            animation: textFlicker 4s infinite;
+        }
+
+        .about-text {
+            color: white;
+            font-family: Helvetica, Arial, sans-serif;
+            font-size: 24px;
+            line-height: 1.6;
+            text-align: center;
+            text-shadow: 0 0 10px #5fce8b;
+            padding: 0 20px;
+            animation: textFlicker 4s infinite;
+        }
+
+        .about-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: transparent;
+            border: 2px solid #5fce8b;
+            color: #5fce8b;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-family: Helvetica, Arial, sans-serif;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .about-close:hover {
+            background: #5fce8b;
+            color: black;
+            box-shadow: 0 0 20px rgba(95, 206, 139, 0.5);
+        }
+
+        .scan-line-about {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to bottom,
+                transparent 0%,
+                rgba(95, 206, 139, 0.2) 50%,
+                transparent 100%
+            );
+            animation: scan 4s linear infinite;
+            pointer-events: none;
+        }
+
+        canvas {
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        .side-panel {
+            position: fixed;
+            left: 20px;
+            top: 100px;
+            width: 300px;
+            height: 300px;
+            background: rgba(0, 0, 0, 0.9);
+            border: 1px solid rgba(95, 206, 139, 0.2);
+            box-shadow: 
+                0 0 30px rgba(95, 206, 139, 0.1),
+                inset 0 0 30px rgba(95, 206, 139, 0.1);
+            padding: 30px;
+            z-index: 10;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .side-panel-title {
+            color: #5fce8b;
+            font-family: Helvetica, Arial, sans-serif;
+            font-size: 24px;
+            font-weight: 900;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            animation: textFlicker 4s infinite;
+            text-align: center;
+        }
+
+        .side-panel-text {
+            font-family: 'Anton', sans-serif;
+            color: white;
+            font-size: 18px;
+            line-height: 1.6;
+            text-shadow: 0 0 10px #5fce8b;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .token-text {
+            color: #5fce8b;
+            font-size: 24px;
+            display: block;
+            margin-top: 10px;
+            animation: textFlicker 4s infinite;
+            text-shadow: 0 0 15px #5fce8b;
+        }
+
+        #model-container {
+            width: 800px;
+            height: 800px;
+            position: fixed;
+            top: 45%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+        }
+
+        .buttons {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            z-index: 2;
+        }
+
+        .scan-line-panel {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to bottom,
+                transparent 0%,
+                rgba(95, 206, 139, 0.2) 50%,
+                transparent 100%
+            );
+            animation: scanContained 4s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes scanContained {
+            0% {
+                transform: translateY(-100%);
+            }
+            100% {
+                transform: translateY(100%);
+            }
+        }
+
+        /* Global font setting */
+        * {
+            font-family: Helvetica, Arial, sans-serif;
+        }
+
+        /* Update specific text elements */
+        .side-panel-title {
+            font-family: Helvetica, Arial, sans-serif;
+            color: #5fce8b;
+            font-size: 28px;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            animation: textFlicker 4s infinite;
+        }
+
+        .side-panel-text {
+            font-family: Helvetica, Arial, sans-serif;
+            color: white;
+            font-size: 18px;
+            font-weight: 500;
+            line-height: 1.6;
+            text-shadow: 0 0 10px #5fce8b;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .token-text {
+            font-family: Helvetica, Arial, sans-serif;
+            color: #5fce8b;
+            font-size: 24px;
+            font-weight: bold;
+            display: block;
+            margin-top: 10px;
+            animation: textFlicker 4s infinite;
+            text-shadow: 0 0 15px #5fce8b;
+        }
+
+        .cyber-button {
+            font-family: Helvetica, Arial, sans-serif;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        button {
+            font-family: Helvetica, Arial, sans-serif;
+            font-weight: bold;
+        }
+
+        .buttons button {
+            font-family: Helvetica, Arial, sans-serif;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .glitch-text {
+            font-family: Helvetica, Arial, sans-serif;
+            font-weight: 900;
+        }
+
+        .ca-container {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            text-align: center;
+            width: 100%;
+            max-width: 900px; /* Increased max-width */
+        }
+
+        .ca-box {
+            background: rgba(0, 0, 0, 0.9);
+            border: 1px solid rgba(95, 206, 139, 0.2);
+            box-shadow: 0 0 30px rgba(95, 206, 139, 0.1);
+            padding: 20px 30px; /* Increased padding */
+            border-radius: 5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 20px; /* Increased gap */
+            height: 40px; /* Set fixed height */
+        }
+
+        .ca-label {
+            font-family: Helvetica, Arial, sans-serif;
+            color: #5fce8b;
+            font-weight: bold;
+            font-size: 14px; /* Adjusted size */
+            white-space: nowrap; /* Prevent wrapping */
+        }
+
+        .ca-text {
+            font-family: Helvetica, Arial, sans-serif;
+            color: white;
+            font-size: 13px; /* Adjusted size */
+            letter-spacing: 0.5px; /* Reduced letter spacing */
+            text-shadow: 0 0 10px #5fce8b;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: 500px; /* Control max width */
+        }
+
+        .copy-button {
+            background: transparent;
+            border: 1px solid #5fce8b;
+            color: #5fce8b;
+            padding: 8px 20px; /* Adjusted padding */
+            cursor: pointer;
+            font-family: Helvetica, Arial, sans-serif;
+            font-weight: bold;
+            font-size: 13px; /* Adjusted size */
+            transition: all 0.3s;
+            white-space: nowrap;
+            min-width: 80px; /* Set minimum width */
+        }
+
+        .copy-button:hover {
+            background: #5fce8b;
+            color: black;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="grid-canvas"></canvas>
+    <!-- <div id="model-container"></div> -->
+    
+    <div class="title-container">
+        <h1 class="title">PUMPFUNROCKET</h1>
+        <div class="social-links">
+            <a href="https://twitter.com/your_twitter" target="_blank">
+                <img src="X_logo_2023_(white).png" alt="Twitter" class="social-icon">
+            </a>
+            <a href="https://t.me/your_telegram" target="_blank">
+                <img src="telegram-icon-2048x1739-6c7sghxm.png" alt="Telegram" class="social-icon">
+            </a>
+        </div>
+    </div>
+
+    <div class="buttons">
+        <button onclick="window.location.href='#buy-link'">Buy Now</button>
+        <button onclick="explode()">Set Off</button>
+    </div>
+
+    <div class="cyber-modal" id="warningModal">
+        <div class="modal-content">
+            <div class="scan-line"></div>
+            <div class="warning-container">
+                <div class="warning-symbol">
+                    <img src="[CITYPNG.COM]White Caution Mark Warning Sign Icon HD PNG - 1000x1000.png" alt="Warning">
+                </div>
+                <div class="warning-ring"></div>
+                <div class="warning-ring"></div>
+                <div class="warning-ring"></div>
+            </div>
+            <h2 class="glitch-text" data-text="CAUTION - EXPLOSIVE">CAUTION - EXPLOSIVE</h2>
+            <div class="cyber-text">
+                FOR OUTDOOR USE ONLY<br><br>
+                ONLY USE WITH CLOSE ADULT SUPERVISION<br><br>
+                BUY WITH SOLANA AND GET AWAY
+            </div>
+            <button class="cyber-button" onclick="closeWarning()">CONTINUE</button>
+        </div>
+    </div>
+
+    <div class="about-modal" id="aboutModal">
+        <div class="scan-line-about"></div>
+        <button class="about-close" onclick="closeAbout()">CLOSE</button>
+        <h2 class="about-title">ABOUT PUMPROCKET</h2>
+        <p class="about-text">
+            PumpRocket a way to go off into the new year with a blast through our firework powered by pumpfun
+        </p>
+    </div>
+
+    <!-- Add the side panel -->
+    <div class="side-panel">
+        <div class="scan-line-panel"></div>
+        <h2 class="side-panel-title">ABOUT PUMPROCKET</h2>
+        <p class="side-panel-text">
+            The first rocket fueled by pumpfun, set to ignite the Solana blockchain. Fast, fearless, unstoppable.<br><br>
+            APE OR BE LEFT BEHIND!<br><br>
+            <span class="token-text">$PUMP2025</span>
+        </p>
+    </div>
+
+    <!-- 3D Model Container -->
+    <div id="model-container"></div>
+
+    <script>
+        const gridCanvas = document.getElementById('grid-canvas');
+        const ctx = gridCanvas.getContext('2d');
+
+        function resizeCanvas() {
+            gridCanvas.width = window.innerWidth;
+            gridCanvas.height = window.innerHeight;
+        }
+
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        let offset = 0;
+        function drawGrid() {
+            ctx.clearRect(0, 0, gridCanvas.width, gridCanvas.height);
+            
+            // Fill background
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(0, 0, gridCanvas.width, gridCanvas.height);
+            
+            // Set line style
+            ctx.strokeStyle = '#5fce8b';
+            ctx.lineWidth = 1;
+            ctx.globalAlpha = 0.5;
+            
+            const gridSize = 50;
+            offset = (offset + 0.5) % gridSize;
+
+            // Draw vertical lines
+            for (let x = offset; x < gridCanvas.width; x += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, gridCanvas.height);
+                ctx.stroke();
+            }
+
+            // Draw horizontal lines
+            for (let y = offset; y < gridCanvas.height; y += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(gridCanvas.width, y);
+                ctx.stroke();
+            }
+
+            requestAnimationFrame(drawGrid);
+        }
+
+        drawGrid();
+
+        // Declare variables in global scope
+        let camera, scene, renderer, model;
+
+        // Initialize everything after window loads
+        window.addEventListener('load', init);
+
+        function init() {
+            // Scene setup
+            scene = new THREE.Scene();
+            
+            // Camera setup
+            camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
+            camera.position.set(0, 0, 2.5);
+
+            // Renderer setup
+            renderer = new THREE.WebGLRenderer({ 
+                alpha: true,
+                antialias: true 
+            });
+            renderer.setSize(800, 800);
+            renderer.setClearColor(0x000000, 0);
+            document.getElementById('model-container').appendChild(renderer.domElement);
+
+            // Lighting
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+            scene.add(ambientLight);
+            
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+            directionalLight.position.set(0, 1, 1);
+            scene.add(directionalLight);
+
+            // Load model
+            const loader = new THREE.GLTFLoader();
+            loader.load(
+                'Rocket_Box_0101005506_texture.glb',
+                function (gltf) {
+                    model = gltf.scene;
+                    model.scale.set(0.7, 0.7, 0.7);
+                    model.rotation.y = Math.PI / 4;
+                    scene.add(model);
+                    console.log('Model loaded successfully!');
+                },
+                function (xhr) {
+                    console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+                },
+                function (error) {
+                    console.error('An error happened:', error);
+                }
+            );
+
+            // Start animation
+            animate();
+
+            // Add window resize handler
+            window.addEventListener('resize', onWindowResize, false);
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            if (model) {
+                model.rotation.y += 0.01;
+            }
+            renderer.render(scene, camera);
+        }
+
+        function onWindowResize() {
+            camera.aspect = 1;
+            camera.updateProjectionMatrix();
+            renderer.setSize(800, 800);
+        }
+
+        function toggleAbout() {
+            const aboutTab = document.querySelector('.about-tab');
+            aboutTab.classList.toggle('open');
+        }
+
+        function explode() {
+            alert('BOOM! 🚀');
+        }
+
+        function closeWarning() {
+            const modal = document.getElementById('warningModal');
+            modal.classList.add('hidden');
+            localStorage.setItem('warningShown', 'true');
+        }
+
+        // Check if warning has been shown before
+        window.addEventListener('load', () => {
+            if (!localStorage.getItem('warningShown')) {
+                document.getElementById('warningModal').classList.remove('hidden');
+            }
+        });
+
+        // Pre-load assets
+        const fireworkSound = new Audio('Sound Effects - Fireworks 4(1).mp3');
+        const fireworkImage = new Image();
+        fireworkImage.src = '371d7a79a0334079a6c09452242d34ef.png';
+        
+        // Debounce function to prevent multiple rapid clicks
+        let isExploding = false;
+        
+        function explode() {
+            if (isExploding) return; // Prevent multiple simultaneous explosions
+            
+            isExploding = true;
+            
+            // Play sound
+            fireworkSound.volume = 0.3;
+            fireworkSound.currentTime = 0;
+            const soundPromise = fireworkSound.play().catch(err => console.log('Audio error:', err));
+            
+            // Create fireworks in batches
+            const totalFireworks = 50;  // Increased to 50
+            const batchSize = 8;        // Increased batch size for better performance
+            const delay = 50;           // Reduced delay between batches
+            
+            for (let i = 0; i < totalFireworks; i++) {
+                setTimeout(() => {
+                    requestAnimationFrame(() => createFirework());
+                }, (i / batchSize) * delay);
+            }
+            
+            // Reset the explosion lock after animation completes
+            setTimeout(() => {
+                isExploding = false;
+            }, (totalFireworks / batchSize) * delay + 1200);
+        }
+
+        function createFirework() {
+            const firework = fireworkImage.cloneNode();
+            firework.className = 'firework';
+            
+            // Adjust positioning for larger fireworks
+            const maxX = window.innerWidth - 200;  // Updated to match new size
+            const maxY = window.innerHeight - 200;
+            const padding = 100; // Increased padding from edges
+            
+            firework.style.left = Math.floor(padding + Math.random() * (maxX - padding * 2)) + 'px';
+            firework.style.top = Math.floor(padding + Math.random() * (maxY - padding * 2)) + 'px';
+            
+            document.body.appendChild(firework);
+            
+            firework.addEventListener('animationend', () => {
+                document.body.removeChild(firework);
+            }, { once: true });
+        }
+
+        // Optimize resize handler
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+            if (resizeTimeout) clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                const maxX = window.innerWidth - 150;
+                const maxY = window.innerHeight - 150;
+                document.querySelectorAll('.firework').forEach(firework => {
+                    firework.style.left = Math.floor(Math.random() * maxX) + 'px';
+                    firework.style.top = Math.floor(Math.random() * maxY) + 'px';
+                });
+            }, 100);
+        });
+
+        function showAbout() {
+            document.getElementById('aboutModal').style.display = 'flex';
+        }
+
+        function closeAbout() {
+            document.getElementById('aboutModal').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
